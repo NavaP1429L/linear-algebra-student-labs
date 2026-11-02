@@ -81,29 +81,30 @@ def lu_factorisation(A):
     L, U = np.zeros_like(A, dtype=float), np.zeros_like(A, dtype=float)
 
     # TODO: fill in L and U
-     # calculate L and U
-   for i in range(n):
+    # calculate L and U
+    for i in range(n):
 
-       # calculate row i of U
-       for j in range(i, n):
-           total = 0
-           for k in range(i):
-               total = total + L[i, k] * U[k, j]
+        # calculate row i of U
+        for j in range(i, n):
+            total = 0
+            for k in range(i):
+                total = total + L[i, k] * U[k, j]
 
-           U[i, j] = A[i, j] - total
+            U[i, j] = A[i, j] - total
 
-       # diagonal of L is 1
-       L[i, i] = 1
+        # diagonal of L is 1
+        L[i, i] = 1
 
-       # calculate column i of L
-       for j in range(i + 1, n):
-           total = 0
-           for k in range(i):
-               total = total + L[j, k] * U[k, i]
+        # calculate column i of L
+        for j in range(i + 1, n):
+            total = 0
+            for k in range(i):
+                total = total + L[j, k] * U[k, i]
 
-           L[j, i] = (A[j, i] - total) / U[i, i]
+            L[j, i] = (A[j, i] - total) / U[i, i]
 
     return L, U
+
 
 def determinant(A):
     n = A.shape[0]
@@ -135,10 +136,10 @@ def row_add(A, b, p, k, q):
     ----------
     A : numpy.ndarray
         A 2D NumPy array of shape ``(n, n)`` representing the coefficient matrix
-        of the linear system.
+        of the system.
     b : numpy.ndarray
         A 2D NumPy array of shape ``(n, 1)`` representing the right-hand side
-        vector of the system.
+        vector.
     p : int
         The index of the row to be updated (destination row). Must satisfy
         ``0 <= p < n``.
@@ -177,7 +178,7 @@ def gaussian_elimination(A, b):
     b : numpy.ndarray
         A 2D NumPy array of shape ``(n, 1)`` representing the right-hand side
         vector.
-
+        
     Returns
     -------
     None
@@ -204,43 +205,43 @@ def runtime_comparison():
     """
   
     # TODO: implement the timing loop and plot, e.g.
-   import time   # import time
-   from matplotlib import pyplot as plt # from matplotlib import pyplot as plt
+    import time
+    from matplotlib import pyplot as plt
 
-   sizes = [2**j for j in range(1, 8)]   # sizes = [2**j for j in range(1, 8)]
+    sizes = [2**j for j in range(1, 8)]
 
-   lu_times = []
-   gaussian_times = []
+    lu_times = []
+    gaussian_times = []
 
-   for n in sizes:
-       A, b, x = generate_safe_system(n)
+    for n in sizes:
+        A, b, x = generate_safe_system(n)
 
-       # time LU factorisation
-       start = time.perf_counter()
-       lu_factorisation(A)
-       end = time.perf_counter()
-       lu_times.append(end - start)
+        # time LU factorisation
+        start = time.perf_counter()
+        lu_factorisation(A)
+        end = time.perf_counter()
+        lu_times.append(end - start)
 
-       # time Gaussian elimination
-       A2, b2, x2 = generate_safe_system(n)
+        # time Gaussian elimination
+        A2, b2, x2 = generate_safe_system(n)
 
-       start = time.perf_counter()
-       gaussian_elimination(A2, b2)
-       end = time.perf_counter()
-       gaussian_times.append(end - start)
+        start = time.perf_counter()
+        gaussian_elimination(A2, b2)
+        end = time.perf_counter()
+        gaussian_times.append(end - start)
 
-   plt.figure()
-   plt.loglog(sizes, lu_times, marker="o", label="LU factorisation")
-   plt.loglog(sizes, gaussian_times, marker="o", label="Gaussian elimination")
+    plt.figure()
+    plt.loglog(sizes, lu_times, marker="o", label="LU factorisation")
+    plt.loglog(sizes, gaussian_times, marker="o", label="Gaussian elimination")
 
-   plt.xlabel("Matrix size")
-   plt.ylabel("Runtime (seconds)")
-   plt.title("LU Factorisation vs Gaussian Elimination")
-   plt.legend()
-   plt.grid(True)
+    plt.xlabel("Matrix size")
+    plt.ylabel("Runtime (seconds)")
+    plt.title("LU Factorisation vs Gaussian Elimination")
+    plt.legend()
+    plt.grid(True)
 
-   plt.savefig("plot.png")  # plt.savefig("plot.png")
-   plt.close()
+    plt.savefig("plot.png")  # plt.savefig("plot.png")
+    plt.close()
 
 if __name__ == "__main__":
     A_large, b_large, x_large = generate_safe_system(100)
