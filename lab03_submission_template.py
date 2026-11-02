@@ -105,7 +105,6 @@ def lu_factorisation(A):
 
     return L, U
 
-
 def determinant(A):
     n = A.shape[0]
     L, U = lu_factorisation(A)
