@@ -15,6 +15,7 @@ What you need to do:
 """
 
 import numpy as np
+import pandas as pd
 
 
 def A_func(eps):
@@ -46,8 +47,16 @@ def gram_schmidt_qr(A):
 
     Q = np.empty_like(A)
     R = np.zeros_like(A)
-
     # TODO: fill in Q and R
+    for j in range(n):
+        a_j = A[:, j]
+        v = a_j.copy()
+       
+        for i in range(j):
+            R[i, j] = Q[:, i] @ a_j
+            v = v - R[i, j] * Q[:, i]
+        R[j, j] = np.linalg.norm(v)
+        Q[:, j] = v / R[j, j]
 
     return Q, R
 
@@ -69,6 +78,23 @@ def generate_table():
     #     )
     # pd.DataFrame(rows).to_csv("table.csv", index=False)
 
+    rows = []
+    for eps in [10.0**-j for j in range(6, 17)]:
+        A = A_func(eps)
+        n = A.shape[0]
+        with np.errstate(divide="ignore", invalid="ignore"):
+            Q, R = gram_schmidt_qr(A)
+        error1 = np.linalg.norm(A - Q @ R)
+        error2 = np.linalg.norm(Q.T @ Q - np.eye(n))
+        error3 = np.linalg.norm(R - np.triu(R))
+        rows.append(
+            {"eps": eps, "error1": error1, "error2": error2, "error3": error3}
+        )
+
+    table = pd.DataFrame(rows)
+    table.to_csv("table.csv", index=False)
+    return table
+
 
 if __name__ == "__main__":
-    generate_table()
+    print(generate_table().to_string(index=False))
